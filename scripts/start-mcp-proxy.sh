@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=resolve-demo-root.sh
+. "$SCRIPT_DIR/resolve-demo-root.sh"
+ROOT="$(resolve_demo_root "$SCRIPT_DIR")"
+PORT="${BLENDER_MCP_PROXY_PORT:-9877}"
+BIND_HOST="${BLENDER_MCP_PROXY_HOST:-127.0.0.1}"
+
+export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
+export BLENDER_HOST="${BLENDER_HOST:-localhost}"
+export BLENDER_PORT="${BLENDER_PORT:-9876}"
+export DISABLE_TELEMETRY="${DISABLE_TELEMETRY:-true}"
+
+mkdir -p "$ROOT/logs"
+echo "mcp-proxy log: $ROOT/logs/mcp-proxy.log"
+
+if ss -ltn | grep -q ":$PORT "; then
+  echo "mcp-proxy already listening on $BIND_HOST:$PORT"
+  exit 0
+fi
+
+nohup uvx mcp-proxy --host "$BIND_HOST" --port "$PORT" uvx blender-mcp \
+  >"$ROOT/logs/mcp-proxy.log" 2>&1 &
+echo "$!" >"$ROOT/logs/mcp-proxy.pid"
+
+for _ in $(seq 1 45); do
+  if ss -ltn | grep -q ":$PORT "; then
+    echo "mcp-proxy listening on $BIND_HOST:$PORT"
+    exit 0
+  fi
+  sleep 1
+done
+
+echo "mcp-proxy did not become ready; see $ROOT/logs/mcp-proxy.log" >&2
+if [ -f "$ROOT/logs/mcp-proxy.log" ]; then
+  tail -80 "$ROOT/logs/mcp-proxy.log" >&2
+fi
+exit 1

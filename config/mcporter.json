@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "blender": {
+      "type": "http",
+      "baseUrl": "http://127.0.0.1:9877/sse"
+    }
+  }
+}
