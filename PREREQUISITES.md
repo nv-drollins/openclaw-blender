@@ -12,7 +12,7 @@ prerequisites where possible.
 | Blender | Host-side scene editor controlled by MCP | `scripts/install-host-prereqs.sh` |
 | `uv` / `uvx` | Runs `mcp-proxy` and `blender-mcp` without a project venv | `scripts/install-host-prereqs.sh` |
 | Node.js 22+ and npm | Native OpenClaw CLI and mcporter runtime | `scripts/install-host-prereqs.sh` via `nvm` if needed |
-| OpenClaw CLI | Native agent, gateway, dashboard, model config, and skills | `scripts/install-host-prereqs.sh` via `npm install -g openclaw@latest` |
+| OpenClaw CLI | Native agent, gateway, dashboard, model config, and skills | `scripts/install-host-prereqs.sh` via pinned `openclaw@2026.5.12`; override with `OPENCLAW_CLI_VERSION` |
 | `mcporter` CLI | Lets OpenClaw call the Blender MCP tools | `scripts/install-host-prereqs.sh` via npm |
 | Ollama 0.22.1 | Local model runtime on DGX Spark / GB10 | `scripts/install-ollama.sh` |
 | `qwen3.6:27b` Ollama model | Default local model for this OpenClaw Blender template | `scripts/ensure-model.sh` |
@@ -27,4 +27,3 @@ Not required for this OpenClaw-only version:
 - vLLM
 - Hugging Face token
 - Virtual display setup
-
